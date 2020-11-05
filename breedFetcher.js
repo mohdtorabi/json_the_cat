@@ -1,20 +1,30 @@
 const request = require('request');
-const breedName = process.argv[2];
 
-const apiLink = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
-request(apiLink, (error, response, body) => {
-  console.log('error:', error);
-  const data = JSON.parse(body);
 
-  if (error === null) {
-    console.log("failed to read");
+const fetchBreedDescription = function(breedName, callBack) {
+  const apiLink = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
 
-  } else if (breedName !== undefined) {
-    console.log(data[0].description);
+  request(apiLink, (error,response, body) => {
+   
+
+    if (error) {
+
+      return callBack(error, null);
+    }
+    const data = JSON.parse(body);
     
-  } else {
-    console.log("No iput was inserted. please try again! ");
-  }
+    if (data[0]) {
+
+      callBack(null, data[0].description);
+      
+    
+    } else {
+      callBack("Invalid cat breed. Please try again! ", null);
+    }
   
 
-});
+  });
+};
+
+
+module.exports = { fetchBreedDescription };
